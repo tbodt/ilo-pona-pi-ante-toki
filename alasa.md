@@ -26,3 +26,8 @@
 //
 // nasin: poki li ala la ken suli la nimi li poki ala.
 
+ona pi linja loje li toki
+[
+    ["en", [["ona"], ["linja loje"]]],
+    ["li", [["toki"]]],
+]

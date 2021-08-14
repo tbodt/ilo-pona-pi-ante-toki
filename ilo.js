@@ -37,14 +37,16 @@ function sonaENasinNimi(toki) {
 
 function pokiENimi(toki) {
     let tokiPoki = [];
-    let pokiPiTenpoNi = {nimi: "en", insa: []};
+    let pokiPiTenpoNi = {nimi: "en", insa: [[]]};
     tokiPoki.push(pokiPiTenpoNi);
     for (let nimi of toki) {
         if (nimi.nasin === "ijo") {
-            pokiPiTenpoNi.insa.push(nimi);
+            pokiPiTenpoNi.insa[pokiPiTenpoNi.insa.length-1].push(nimi);
         } else if (nimi.nasin === "poki") {
-            pokiPiTenpoNi = {nimi: nimi.nimi, insa: []};
+            pokiPiTenpoNi = {nimi: nimi.nimi, insa: [[]]};
             tokiPoki.push(pokiPiTenpoNi);
+        } else if (nimi.nasin === "pi") {
+            pokiPiTenpoNi.insa.push([]);
         }
     }
     return tokiPoki;
@@ -58,19 +60,33 @@ function tokiInliEToki(toki) {
         } else if (poki.nimi === "e") {
             tokiInli.push("the");
         }
-        tokiInli.push(...tokiInliEIjo(poki.insa));
+        tokiInli.push(...tokiInliEIjo(poki));
     }
     return tokiInli;
 }
 
-function tokiInliEIjo(ijo) {
+function tokiInliEIjo(pokiIjo) {
     let tokiInli = [];
-    for (let nimi of [...ijo].reverse()) {
-        nimi = nimi.nimi;
-        let konNimi = KON_NIMI[nimi];
-        if (konNimi !== undefined)
-            nimi = konNimi.ijo;
-        tokiInli.push(nimi);
+    for (let nPoki = pokiIjo.insa.length; nPoki--; nPoki >= 0) {
+        let pokiPi = pokiIjo.insa[nPoki];
+        let inliPiPokiPi = [];
+        for (let nimi of [...pokiPi].reverse()) {
+            nimi = nimi.nimi;
+            let konNimi = KON_NIMI[nimi];
+            if (konNimi !== undefined) {
+                let nasinKon = 'ijo';
+                if (pokiIjo.nimi === "li" && nPoki === 0) {
+                    // ken suli la, nimi nanpa wan pi poki "li" li pali.
+                    nasinKon = 'pali';
+                }
+                if (konNimi[nasinKon] === undefined)
+                    nasinKon = 'ijo';
+                nimi = konNimi[nasinKon];
+            }
+
+            inliPiPokiPi.push(nimi);
+        }
+        tokiInli.push(inliPiPokiPi.join("-"));
     }
     return tokiInli;
 }
@@ -80,9 +96,10 @@ function anteEToki(tokiPona) {
     tokiInli = '';
     for (let toki of tokiMute) {
         toki = sonaENasinNimi(toki);
-        toki = pokiENimi(toki);
-        toki = tokiInliEToki(toki);
-        toki = toki.join(" ");
+        let poki = pokiENimi(toki);
+        console.log(poki);
+        let inli = tokiInliEToki(poki);
+        toki = inli.join(" ");
         toki = toki.charAt(0).toUpperCase() + toki.slice(1);
         tokiInli += toki + '. ';
     }
