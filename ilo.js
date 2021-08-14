@@ -11,6 +11,8 @@ function kipisiENimi(tokiPona) {
     // sitelen ante ale li nimi.
 
     tokiPona = tokiPona.split(KIPISI_TOKI).map(toki => toki.split(KIPISI_NIMI));
+    tokiPona = tokiPona.map(toki => toki.filter(nimi => nimi !== ""));
+    tokiPona = tokiPona.filter(toki => toki.length !== 0);
     return tokiPona;
 }
 
@@ -26,7 +28,7 @@ function sonaENasinNimi(toki) {
         let nasin = "ijo";
         switch (nimi.nimi) {
                 //case "la": nasin = "la"; break;
-            case "li": case "o": case "e": nasin = "poki"; break;
+            case "li": case "o": case "e": case "en": nasin = "poki"; break;
             case "pi": nasin = "pi"; break;
         }
         nimi.nasin = nasin;
@@ -35,15 +37,30 @@ function sonaENasinNimi(toki) {
     return tokiNasin;
 }
 
+// ijo ni li tawa sona ni: nimi "and" li wile ala wile lon open poki?
+// ilo li lukin e nimi nanpa pini li tawa pini. ona li kama lukin e poki pi
+// wawa sama la nimi "and" li wile. poki pini li wawa mute tawa poki ni la
+// lukin li pini.
+// nasin li nasa. taso ona li sona pona.
+const WAWA_POKI = {
+    "en": 3,
+    "li": 2,
+    "o": 2,
+    "e": 1,
+};
+
 function pokiENimi(toki) {
     let tokiPoki = [];
-    let pokiPiTenpoNi = {nimi: "en", insa: [[]]};
+    let pokiPiTenpoNi = {nimi: "en", wawa: WAWA_POKI["en"], insa: [[]]};
     tokiPoki.push(pokiPiTenpoNi);
     for (let nimi of toki) {
         if (nimi.nasin === "ijo") {
             pokiPiTenpoNi.insa[pokiPiTenpoNi.insa.length-1].push(nimi);
         } else if (nimi.nasin === "poki") {
-            pokiPiTenpoNi = {nimi: nimi.nimi, insa: [[]]};
+            let wawa = WAWA_POKI[nimi.nimi];
+            if (wawa === undefined)
+                wawa = 0;
+            pokiPiTenpoNi = {nimi: nimi.nimi, wawa, insa: [[]]};
             tokiPoki.push(pokiPiTenpoNi);
         } else if (nimi.nasin === "pi") {
             pokiPiTenpoNi.insa.push([]);
@@ -54,7 +71,17 @@ function pokiENimi(toki) {
 
 function tokiInliEToki(toki) {
     let tokiInli = [];
-    for (let poki of toki) {
+    for (let nPoki = 0; nPoki < toki.length; nPoki++) {
+        let poki = toki[nPoki];
+        let wileAnd = false;
+        for (let nAlasaWawa = nPoki - 1; nAlasaWawa >= 0 && toki[nAlasaWawa].wawa <= poki.wawa; nAlasaWawa--) {
+            if (poki.wawa == toki[nAlasaWawa].wawa) {
+                wileAnd = true;
+                break;
+            }
+        }
+        if (wileAnd)
+            tokiInli.push("and");
         if (poki.nimi === "li") {
             tokiInli.push("does");
         } else if (poki.nimi === "e") {
