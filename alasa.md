@@ -1,3 +1,11 @@
+o pali lon tenpo:
+- nimi li ken poki
+- nimi li ken poka pali
+- nimi "la"
+- nimi "taso"
+- toki Inli
+- sitelen o awen
+
 // mun ni li moku e kulupu
 // [
 // ["en", ["mun", "ni"]]

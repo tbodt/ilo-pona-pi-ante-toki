@@ -29,10 +29,25 @@ function sonaENasinNimi(toki) {
         switch (nimi.nimi) {
                 //case "la": nasin = "la"; break;
             case "li": case "o": case "e": case "en": nasin = "poki"; break;
+            case "lon": case "tawa": case "tan": case "sama": case "kepeken": nasin = "ken poki"; break;
             case "pi": nasin = "pi"; break;
         }
         nimi.nasin = nasin;
         tokiNasin.push(nimi)
+    }
+    // nimi "lon" en sama li ken ijo li ken poki kin. nasin ni la mi sona:
+    // ala li lon insa poki la ken suli la nimi li poki ala.
+    // tenpo ni la mi lukin e nimi taso e poki ala. ilo ante li pali e poki. ni la nasin li ni:
+    // nimi ni li ken poki la, nimi kama nanpa wan kin li ken, anu nimi kama nanpa wan li lon ala, la nimi ni li poki ala.
+    for (let n = 0; n < tokiNasin.length; n++) {
+        let nimiNi = tokiNasin[n];
+        let nimiKama = tokiNasin[n+1];
+        if (nimiNi.nasin == "ken poki") {
+            if (nimiKama !== undefined && ["ken poki", "poki"].includes(nimiKama.nasin))
+                nimiNi.nasin = "ijo";
+            else
+                nimiNi.nasin = "poki";
+        }
     }
     return tokiNasin;
 }
@@ -82,10 +97,24 @@ function tokiInliEToki(toki) {
         }
         if (wileAnd)
             tokiInli.push("and");
-        if (poki.nimi === "li") {
-            tokiInli.push("does");
-        } else if (poki.nimi === "e") {
-            tokiInli.push("the");
+        switch (poki.nimi) {
+            case "li":
+                tokiInli.push("does");
+                break;
+            case "e":
+                // WILE: o weka e ni. ni li sona ike.
+                tokiInli.push("the");
+                break;
+            case "en":
+                break;
+
+            case "lon":
+                tokiInli.push("in");
+                break;
+
+            default:
+                console.log('mi sona ala toki Inli e lawa pi poki ni', poki);
+                break;
         }
         tokiInli.push(...tokiInliEIjo(poki));
     }
@@ -113,7 +142,10 @@ function tokiInliEIjo(pokiIjo) {
 
             inliPiPokiPi.push(nimi);
         }
-        tokiInli.push(inliPiPokiPi.join("-"));
+        let insa = "-";
+        if (nPoki == 0)
+            insa = " ";
+        tokiInli.push(inliPiPokiPi.join(insa));
     }
     return tokiInli;
 }
