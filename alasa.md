@@ -1,9 +1,10 @@
 o pali lon tenpo:
 - [x] nimi li ken poki
+- [x] toki Inli
+- nimi li ijo anu pali? o kepeken nimi "is" lon pona
 - nimi li ken poka pali
 - nimi "la"
 - nimi "taso"
-- [x] toki Inli
 - sitelen o awen
 
 // mun ni li moku e kulupu

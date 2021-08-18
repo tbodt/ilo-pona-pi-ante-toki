@@ -56,17 +56,23 @@ function pokiENimi(toki) {
     tokiPoki.push(pokiPiTenpoNi);
     for (let n = 0; n < toki.length; n++) {
         let nimi = toki[n];
+        let nimiPini = toki[n-1];
         let nimiKama = toki[n+1];
 
         // nimi "lon" en sama li ken ijo li ken poki kin. nasin ni la mi sona:
         // ala li lon insa poki la ken suli la nimi li poki ala.
         // tenpo ni la mi lukin e nimi taso e poki ala. ni la nasin li ni:
         // nimi ni li ken poki la, nimi kama nanpa wan kin li ken, anu nimi kama nanpa wan li lon ala, la nimi ni li poki ala.
-        if (nimiNi.nasin == "ken poki") {
+        //
+        // nasin sin:
+        // nimi nanpa pini li lon ala, anu ona li poki li nimi "li" ala, la ken suli la nimi ni li poki ala.
+        if (nimi.nasin == "ken poki") {
             if (nimiKama === undefined || ["ken poki", "poki"].includes(nimiKama.nasin))
-                nimiNi.nasin = "ijo";
+                nimi.nasin = "ijo";
+            else if (nimiPini === undefined || (nimiPini.nasin === "poki" && nimiPini.nimi !== "li"))
+                nimi.nasin = "ijo";
             else
-                nimiNi.nasin = "poki";
+                nimi.nasin = "poki";
         }
 
         if (nimi.nasin === "ijo") {
