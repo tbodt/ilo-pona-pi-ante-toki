@@ -35,20 +35,6 @@ function sonaENasinNimi(toki) {
         nimi.nasin = nasin;
         tokiNasin.push(nimi)
     }
-    // nimi "lon" en sama li ken ijo li ken poki kin. nasin ni la mi sona:
-    // ala li lon insa poki la ken suli la nimi li poki ala.
-    // tenpo ni la mi lukin e nimi taso e poki ala. ilo ante li pali e poki. ni la nasin li ni:
-    // nimi ni li ken poki la, nimi kama nanpa wan kin li ken, anu nimi kama nanpa wan li lon ala, la nimi ni li poki ala.
-    for (let n = 0; n < tokiNasin.length; n++) {
-        let nimiNi = tokiNasin[n];
-        let nimiKama = tokiNasin[n+1];
-        if (nimiNi.nasin == "ken poki") {
-            if (nimiKama !== undefined && ["ken poki", "poki"].includes(nimiKama.nasin))
-                nimiNi.nasin = "ijo";
-            else
-                nimiNi.nasin = "poki";
-        }
-    }
     return tokiNasin;
 }
 
@@ -68,7 +54,21 @@ function pokiENimi(toki) {
     let tokiPoki = [];
     let pokiPiTenpoNi = {nimi: "en", wawa: WAWA_POKI["en"], insa: [[]]};
     tokiPoki.push(pokiPiTenpoNi);
-    for (let nimi of toki) {
+    for (let n = 0; n < toki.length; n++) {
+        let nimi = toki[n];
+        let nimiKama = toki[n+1];
+
+        // nimi "lon" en sama li ken ijo li ken poki kin. nasin ni la mi sona:
+        // ala li lon insa poki la ken suli la nimi li poki ala.
+        // tenpo ni la mi lukin e nimi taso e poki ala. ni la nasin li ni:
+        // nimi ni li ken poki la, nimi kama nanpa wan kin li ken, anu nimi kama nanpa wan li lon ala, la nimi ni li poki ala.
+        if (nimiNi.nasin == "ken poki") {
+            if (nimiKama === undefined || ["ken poki", "poki"].includes(nimiKama.nasin))
+                nimiNi.nasin = "ijo";
+            else
+                nimiNi.nasin = "poki";
+        }
+
         if (nimi.nasin === "ijo") {
             pokiPiTenpoNi.insa[pokiPiTenpoNi.insa.length-1].push(nimi);
         } else if (nimi.nasin === "poki") {
@@ -81,6 +81,12 @@ function pokiENimi(toki) {
             pokiPiTenpoNi.insa.push([]);
         }
     }
+
+    // ala li lon insa poki pi nimi "li" la ilo li awen pana e poki nasa pi ijo ala tan ni: nimi "pi" li **ken** lon kama. mi weka e ni.
+    for (let poki of tokiPoki) {
+        if (poki.insa.length == 1 && poki.insa[0].length == 0)
+            poki.insa = [];
+    }
     return tokiPoki;
 }
 
@@ -90,7 +96,7 @@ function tokiInliEToki(toki) {
         let poki = toki[nPoki];
         let wileAnd = false;
         for (let nAlasaWawa = nPoki - 1; nAlasaWawa >= 0 && toki[nAlasaWawa].wawa <= poki.wawa; nAlasaWawa--) {
-            if (poki.wawa == toki[nAlasaWawa].wawa) {
+            if (poki.nimi == toki[nAlasaWawa].nimi) {
                 wileAnd = true;
                 break;
             }
@@ -99,7 +105,11 @@ function tokiInliEToki(toki) {
             tokiInli.push("and");
         switch (poki.nimi) {
             case "li":
-                tokiInli.push("does");
+                // poki ni la, nimi li pali lon toki inli la ni o "does". nimi li ijo lon toki inli la ni o "is".
+                if (poki.insa.length == 0)
+                    tokiInli.push("is");
+                else
+                    tokiInli.push("does");
                 break;
             case "e":
                 // WILE: o weka e ni. ni li sona ike.
@@ -108,11 +118,11 @@ function tokiInliEToki(toki) {
             case "en":
                 break;
 
-            case "lon":
-                tokiInli.push("in");
-                break;
-
             default:
+                if (KON_NIMI[poki.nimi] !== undefined || KON_NIMI[poki.nimi].poki !== undefined) {
+                    tokiInli.push(KON_NIMI[poki.nimi].poki);
+                    break;
+                }
                 console.log('mi sona ala toki Inli e lawa pi poki ni', poki);
                 break;
         }
@@ -123,15 +133,15 @@ function tokiInliEToki(toki) {
 
 function tokiInliEIjo(pokiIjo) {
     let tokiInli = [];
-    for (let nPoki = pokiIjo.insa.length; nPoki--; nPoki >= 0) {
+    for (let nPoki = pokiIjo.insa.length - 1; nPoki >= 0; nPoki--) {
         let pokiPi = pokiIjo.insa[nPoki];
         let inliPiPokiPi = [];
-        for (let nimi of [...pokiPi].reverse()) {
-            nimi = nimi.nimi;
+        for (let nPokiPi = pokiPi.length - 1; nPokiPi >= 0; nPokiPi--) {
+            nimi = pokiPi[nPokiPi].nimi;
             let konNimi = KON_NIMI[nimi];
             if (konNimi !== undefined) {
                 let nasinKon = 'ijo';
-                if (pokiIjo.nimi === "li" && nPoki === 0) {
+                if (pokiIjo.nimi === "li" && nPoki === 0 && nPokiPi === 0) {
                     // ken suli la, nimi nanpa wan pi poki "li" li pali.
                     nasinKon = 'pali';
                 }
@@ -156,7 +166,6 @@ function anteEToki(tokiPona) {
     for (let toki of tokiMute) {
         toki = sonaENasinNimi(toki);
         let poki = pokiENimi(toki);
-        console.log(poki);
         let inli = tokiInliEToki(poki);
         toki = inli.join(" ");
         toki = toki.charAt(0).toUpperCase() + toki.slice(1);

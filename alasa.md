@@ -1,9 +1,9 @@
 o pali lon tenpo:
-- nimi li ken poki
+- [x] nimi li ken poki
 - nimi li ken poka pali
 - nimi "la"
 - nimi "taso"
-- toki Inli
+- [x] toki Inli
 - sitelen o awen
 
 // mun ni li moku e kulupu
@@ -39,3 +39,6 @@ ona pi linja loje li toki
     ["en", [["ona"], ["linja loje"]]],
     ["li", [["toki"]]],
 ]
+
+
+ijo (kule mute) li pali (kule mute) pi ijo (kule mute) e ijo (kule mute)
