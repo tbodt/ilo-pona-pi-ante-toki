@@ -6,7 +6,7 @@ function kipisiENimi(tokiPona) {
     // sitelen .;:?! li kipisi e toki a
     const KIPISI_TOKI = /[.;:?!]/;
     // weka sitelen pi nasin Juniko li kipisi e nimi
-    // WILE: o kepeken nasin Juniko a
+    // TEKA: o kepeken nasin Juniko a
     const KIPISI_NIMI = /\s/;
     // sitelen ante ale li nimi.
 
@@ -88,11 +88,22 @@ function pokiENimi(toki) {
         }
     }
 
-    // ala li lon insa poki pi nimi "li" la ilo li awen pana e poki nasa pi ijo ala tan ni: nimi "pi" li **ken** lon kama. mi weka e ni.
     for (let poki of tokiPoki) {
+        // ala li lon insa poki pi nimi "li" la ilo li awen pana e poki nasa pi ijo ala tan ni: nimi "pi" li **ken** lon kama. mi weka e ni.
         if (poki.insa.length == 1 && poki.insa[0].length == 0)
             poki.insa = [];
+
+        // poki li "li" la nimi nanpa wan pi poki "pi" nanpa wan li ken pali.
+        if (poki.nimi === "li" && poki.insa.length > 0) {
+            let nimiNanpaWan = poki.insa[0][0];
+            let konKen = KON_NIMI[nimiNanpaWan.nimi];
+            // nimi li ken pali la mi nimi pali e ona.
+            // TEKA: ken la tenpo kama la nimi pi ken pali li wile ala pali. nimi "nasin" li wile ijo lon tenpo mute li sama ala "organize". "ni li nasin" li "this organizes" ala.
+            if (konKen !== undefined && konKen.pali !== undefined)
+                nimiNanpaWan.nasin = "pali";
+        }
     }
+    console.log(tokiPoki);
     return tokiPoki;
 }
 
@@ -112,13 +123,14 @@ function tokiInliEToki(toki) {
         switch (poki.nimi) {
             case "li":
                 // poki ni la, nimi li pali lon toki inli la ni o "does". nimi li ijo lon toki inli la ni o "is".
-                if (poki.insa.length == 0)
+                if (poki.insa.length == 0 || poki.insa[0][0].nasin === "ijo")
+                    // TEKA: nimi e li lon la mi wile e nimi sama "make".
                     tokiInli.push("is");
                 else
                     tokiInli.push("does");
                 break;
             case "e":
-                // WILE: o weka e ni. ni li sona ike.
+                // TEKA: o weka e ni. ni li sona ike.
                 tokiInli.push("the");
                 break;
             case "en":

@@ -1,7 +1,8 @@
 o pali lon tenpo:
 - [x] nimi li ken poki
 - [x] toki Inli
-- nimi li ijo anu pali? o kepeken nimi "is" lon pona
+- [x] nimi li ijo anu pali? o kepeken nimi "is" lon pona
+- nimi li ijo anu kule?
 - nimi li ken poka pali
 - nimi "la"
 - nimi "taso"
