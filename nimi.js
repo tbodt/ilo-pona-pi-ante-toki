@@ -7,7 +7,7 @@ const KON_NIMI = {
     'kasi': {ijo: 'plant'},
     'kepeken': {poki: 'using'},
     'kulupu': {ijo: 'group'},
-    'lawa': {pali: 'head', ijo: 'head'},
+    'lawa': {pali: 'control', ijo: 'control'},
     'linja': {ijo: 'string'},
     'loje': {ijo: 'red'},
     'lon': {poki: 'in', pali: 'exist', ijo: 'real'},
