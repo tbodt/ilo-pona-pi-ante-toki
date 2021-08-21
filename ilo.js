@@ -68,6 +68,12 @@ const WAWA_POKI = {
 };
 
 function pokiEInsaTeLaTo(toki) {
+    // nimi nanpa wan li "taso" la ona li ken nasa. nimi nanpa tu li poki li ken ala poki ala la mi nasa e ona.
+    if (toki[0] !== undefined && toki[0].nimi === "taso") {
+        if (toki[1] !== undefined && !["la", "poki"].includes(toki[1].nasin))
+            toki[0].nasin = "nasa";
+    }
+
     let nimiLiLiLon = false;
     for (let nimi of toki) {
         if (nimi.nimi === "li")
@@ -75,8 +81,14 @@ function pokiEInsaTeLaTo(toki) {
     }
 
     let tokiPoki = [];
-    let pokiPiTenpoNi = {nimi: "en", wawa: WAWA_POKI["en"], insa: [[]]};
-    tokiPoki.push(pokiPiTenpoNi);
+    let pokiPiTenpoNi = null;
+    function openEPoki(nimi) {
+        let wawa = WAWA_POKI[nimi];
+        if (wawa === undefined)
+            wawa = 0;
+        pokiPiTenpoNi = {nimi, wawa, insa: [[]]};
+        tokiPoki.push(pokiPiTenpoNi);
+    }
     for (let n = 0; n < toki.length; n++) {
         let nimi = toki[n];
         let nimiPini = toki[n-1];
@@ -93,22 +105,27 @@ function pokiEInsaTeLaTo(toki) {
         if (nimi.nasin == "ken poki") {
             if (nimiKama === undefined || ["ken poki", "poki"].includes(nimiKama.nasin))
                 nimi.nasin = "ijo";
-            else if (nimiLiLiLon && (nimiPini === undefined || (nimiPini.nasin === "poki" && nimiPini.nimi !== "li")))
+            else if (nimiLiLiLon && (nimiPini === undefined || nimiPini.nasin === "nasa" || (nimiPini.nasin === "poki" && nimiPini.nimi !== "li")))
                 nimi.nasin = "ijo";
             else
                 nimi.nasin = "poki";
         }
 
         if (nimi.nasin === "ijo") {
+            if (pokiPiTenpoNi === null)
+                openEPoki("en");
             pokiPiTenpoNi.insa[pokiPiTenpoNi.insa.length-1].push(nimi);
-        } else if (nimi.nasin === "poki") {
-            let wawa = WAWA_POKI[nimi.nimi];
-            if (wawa === undefined)
-                wawa = 0;
-            pokiPiTenpoNi = {nimi: nimi.nimi, wawa, insa: [[]]};
-            tokiPoki.push(pokiPiTenpoNi);
         } else if (nimi.nasin === "pi") {
+            if (pokiPiTenpoNi === null)
+                openEPoki("en");
             pokiPiTenpoNi.insa.push([]);
+        } else if (nimi.nasin === "nasa") {
+            if (pokiPiTenpoNi === null || pokiPiTenpoNi.nimi !== "nasa")
+                openEPoki("nasa");
+            pokiPiTenpoNi.nasa = nimi;
+            pokiPiTenpoNi = null;
+        } else if (nimi.nasin === "poki") {
+            openEPoki(nimi.nimi);
         }
     }
 
@@ -191,6 +208,11 @@ function tokiInliEInsaTeLaTo(toki) {
                 tokiInli.push("the");
                 break;
             case "en":
+                break;
+
+            case "nasa":
+                if (poki.nasa.nimi === "taso")
+                    tokiInli.push("but");
                 break;
 
             default:
