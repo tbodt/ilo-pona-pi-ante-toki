@@ -242,7 +242,6 @@ function anteEToki(tokiPona) {
         toki = sonaENasinNimi(toki);
         toki = kipisiENimiLa(toki);
         let tokiPoki = toki.map(pokiEInsaTeLaTo);
-        console.log(tokiPoki);
         tokiInli += tokiInliEToki(tokiPoki);
     }
     return tokiInli;
