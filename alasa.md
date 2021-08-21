@@ -6,6 +6,7 @@ o pali lon tenpo:
 - [x] nimi "taso"
 - nimi li ijo anu kule?
 - nimi li ken poka pali
+- ijo li mute la toki Inli li wile ante
 - sitelen o awen
 - "taso ijo la" o "given but ijo la" ala
 
