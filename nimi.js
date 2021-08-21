@@ -22,6 +22,7 @@ const KON_NIMI = {
     'pimeja': {ijo: 'dark'},
     'pona': {ijo: 'good'},
     'tawa': {poki: 'towards', ijo: 'movement'},
+    'tenpo': {ijo: 'time'},
     'toki': {pali: 'speak', ijo: 'speech'},
     'tomo': {ijo: 'house'},
     'wan': {ijo: 'one'},

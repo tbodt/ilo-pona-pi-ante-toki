@@ -5,9 +5,9 @@ const pokiTokiIlo = document.getElementById('toki-kama');
 function kipisiENimi(tokiPona) {
     // sitelen .;:?! li kipisi e toki a
     const KIPISI_TOKI = /[.;:?!]/;
-    // weka sitelen pi nasin Juniko li kipisi e nimi
+    // weka sitelen pi nasin Juniko en sitelen pi awen uta li kipisi e nimi
     // TEKA: o kepeken nasin Juniko a
-    const KIPISI_NIMI = /\s/;
+    const KIPISI_NIMI = /[\s,-]/;
     // sitelen ante ale li nimi.
 
     tokiPona = tokiPona.split(KIPISI_TOKI).map(toki => toki.split(KIPISI_NIMI));
@@ -27,7 +27,7 @@ function sonaENasinNimi(toki) {
         nimi = {nimi};
         let nasin = "ijo";
         switch (nimi.nimi) {
-                //case "la": nasin = "la"; break;
+            case "la": nasin = "la"; break;
             case "li": case "o": case "e": case "en": nasin = "poki"; break;
             case "lon": case "tawa": case "tan": case "sama": case "kepeken": nasin = "ken poki"; break;
             case "pi": nasin = "pi"; break;
@@ -36,6 +36,23 @@ function sonaENasinNimi(toki) {
         tokiNasin.push(nimi)
     }
     return tokiNasin;
+}
+
+function kipisiENimiLa(toki) {
+    let kulupuPiPokiLa = [];
+    let kulupuNi = [];
+    kulupuPiPokiLa.push(kulupuNi);
+    for (let nimi of toki) {
+        if (nimi.nimi === "la") {
+            kulupuNi = [];
+            kulupuPiPokiLa.push(kulupuNi);
+        } else {
+            kulupuNi.push(nimi);
+        }
+    }
+    if (kulupuNi.length === 0)
+        kulupuPiPokiLa.pop();
+    return kulupuPiPokiLa;
 }
 
 // ijo ni li tawa sona ni: nimi "and" li wile ala wile lon open poki?
@@ -50,7 +67,13 @@ const WAWA_POKI = {
     "e": 1,
 };
 
-function pokiENimi(toki) {
+function pokiEInsaTeLaTo(toki) {
+    let nimiLiLiLon = false;
+    for (let nimi of toki) {
+        if (nimi.nimi === "li")
+            nimiLiLiLon = true;
+    }
+
     let tokiPoki = [];
     let pokiPiTenpoNi = {nimi: "en", wawa: WAWA_POKI["en"], insa: [[]]};
     tokiPoki.push(pokiPiTenpoNi);
@@ -66,10 +89,11 @@ function pokiENimi(toki) {
         //
         // nasin sin:
         // nimi nanpa pini li lon ala, anu ona li poki li nimi "li" ala, la ken suli la nimi ni li poki ala.
+        // taso poki "li" li lon ala la ona li ken wile poki anu seme
         if (nimi.nasin == "ken poki") {
             if (nimiKama === undefined || ["ken poki", "poki"].includes(nimiKama.nasin))
                 nimi.nasin = "ijo";
-            else if (nimiPini === undefined || (nimiPini.nasin === "poki" && nimiPini.nimi !== "li"))
+            else if (nimiLiLiLon && (nimiPini === undefined || (nimiPini.nasin === "poki" && nimiPini.nimi !== "li")))
                 nimi.nasin = "ijo";
             else
                 nimi.nasin = "poki";
@@ -103,11 +127,44 @@ function pokiENimi(toki) {
                 nimiNanpaWan.nasin = "pali";
         }
     }
-    console.log(tokiPoki);
     return tokiPoki;
 }
 
 function tokiInliEToki(toki) {
+    let sitelenInli = "";
+    for (let n = 0; n < toki.length; n++) {
+        let tokiInli = [];
+        let pokiLa = toki[n];
+        if (n !== toki.length - 1) {
+            let pokiLiLiLon = false;
+            let pokiEnLiLon = false;
+            for (let poki of pokiLa) {
+                if (poki.nimi === "li")
+                    pokiLiLiLon = true;
+                else if (poki.nimi === "en" && poki.insa.length > 0)
+                    pokiEnLiLon = true;
+            }
+
+            // poki "li" li lon la mi wile e "When" anu ", so" anu seme.
+            // ala la poki "en" li lon la mi wile e "In the context of" anu "Given".
+            // ala la mi toki e ala. nimi poki li nanpa wan li toki e kon poki li pona.
+            if (pokiLiLiLon)
+                tokiInli.push("When");
+            else if (pokiEnLiLon)
+                tokiInli.push("In the context of");
+        }
+        tokiInli.push(...tokiInliEInsaTeLaTo(pokiLa));
+        let inli = tokiInli.join(" ");
+        if (n !== toki.length - 1) {
+            inli += ", ";
+        }
+        sitelenInli += inli;
+    }
+    sitelenInli = sitelenInli.charAt(0).toUpperCase() + sitelenInli.slice(1) + ". ";
+    return sitelenInli;
+}
+
+function tokiInliEInsaTeLaTo(toki) {
     let tokiInli = [];
     for (let nPoki = 0; nPoki < toki.length; nPoki++) {
         let poki = toki[nPoki];
@@ -137,7 +194,7 @@ function tokiInliEToki(toki) {
                 break;
 
             default:
-                if (KON_NIMI[poki.nimi] !== undefined || KON_NIMI[poki.nimi].poki !== undefined) {
+                if (KON_NIMI[poki.nimi] !== undefined && KON_NIMI[poki.nimi].poki !== undefined) {
                     tokiInli.push(KON_NIMI[poki.nimi].poki);
                     break;
                 }
@@ -183,11 +240,10 @@ function anteEToki(tokiPona) {
     tokiInli = '';
     for (let toki of tokiMute) {
         toki = sonaENasinNimi(toki);
-        let poki = pokiENimi(toki);
-        let inli = tokiInliEToki(poki);
-        toki = inli.join(" ");
-        toki = toki.charAt(0).toUpperCase() + toki.slice(1);
-        tokiInli += toki + '. ';
+        toki = kipisiENimiLa(toki);
+        let tokiPoki = toki.map(pokiEInsaTeLaTo);
+        console.log(tokiPoki);
+        tokiInli += tokiInliEToki(tokiPoki);
     }
     return tokiInli;
 }
