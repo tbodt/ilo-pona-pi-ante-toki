@@ -7,6 +7,7 @@ o pali lon tenpo:
 - nimi li ijo anu kule?
 - nimi li ken poka pali
 - sitelen o awen
+- "taso ijo la" o "given but ijo la" ala
 
 // mun ni li moku e kulupu
 // [

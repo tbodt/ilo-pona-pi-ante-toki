@@ -105,7 +105,7 @@ function pokiEInsaTeLaTo(toki) {
         if (nimi.nasin == "ken poki") {
             if (nimiKama === undefined || ["ken poki", "poki"].includes(nimiKama.nasin))
                 nimi.nasin = "ijo";
-            else if (nimiLiLiLon && (nimiPini === undefined || nimiPini.nasin === "nasa" || (nimiPini.nasin === "poki" && nimiPini.nimi !== "li")))
+            else if (nimiLiLiLon && (nimiPini === undefined || ["pi", "nasa"].includes(nimiPini.nasin) || (nimiPini.nasin === "poki" && nimiPini.nimi !== "li")))
                 nimi.nasin = "ijo";
             else
                 nimi.nasin = "poki";
