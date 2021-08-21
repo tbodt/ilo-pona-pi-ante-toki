@@ -244,7 +244,8 @@ function tokiInliEIjo(pokiIjo) {
                 }
                 if (konNimi[nasinKon] === undefined)
                     nasinKon = 'ijo';
-                nimi = konNimi[nasinKon];
+                if (konNimi[nasinKon] !== undefined)
+                    nimi = konNimi[nasinKon];
             }
 
             inliPiPokiPi.push(nimi);
