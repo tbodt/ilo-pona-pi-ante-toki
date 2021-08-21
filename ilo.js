@@ -145,14 +145,43 @@ function pokiEInsaTeLaTo(toki) {
         if (poki.insa.mute == 1 && poki.insa[0].mute == 0)
             poki.insa = [];
 
-        // poki li "li" la nimi nanpa wan pi poki "pi" nanpa wan li ken pali.
-        if (poki.nimi === "li" && poki.insa.mute > 0) {
-            let nimiNanpaWan = poki.insa[0][0];
-            let konKen = KON_NIMI[nimiNanpaWan.nimi];
-            // nimi li ken pali la mi nimi pali e ona.
-            // TEKA: ken la tenpo kama la nimi pi ken pali li wile ala pali. nimi "nasin" li wile ijo lon tenpo mute li sama ala "organize". "ni li nasin" li "this organizes" ala.
-            if (konKen !== weka && konKen.pali !== weka)
-                nimiNanpaWan.nasin = "pali";
+        // poki li "li" la nimi nanpa wan pi poki "pi" nanpa wan li wile pali.
+        // ala la ona li wile ijo.
+        // nimi ante pi poki pi li wile kule.
+
+        for (let nPokiPi = 0; nPokiPi < poki.insa.mute; nPokiPi++) {
+            let pokiPi = poki.insa[nPokiPi];
+            for (let nNimi = 0; nNimi < pokiPi.mute; nNimi++) {
+                let nimi = pokiPi[nNimi];
+
+                // mi lukin e kon wile pi nimi ni.
+                // nimi li nanpa wan ala lon poki pi la ona li wile nimi kule.
+                // ala la, ona li lon poki "pi" nanpa wan pi poki "li" la ona li wile nimi pali.
+                // ala la, ona li wile ijo.
+                let nasinKon;
+                if (nNimi !== 0)
+                    nasinKon = "kule";
+                else if (poki.nimi === "li")
+                    nasinKon = "pali";
+                else
+                    nasinKon = "ijo";
+
+                // TEKA: ken la tenpo kama la nimi pi ken pali li wile ala pali. nimi "nasin" li wile ijo lon tenpo mute li sama ala "organize". "ni li nasin" li "this organizes" ala.
+
+                // nasin kon wile li ken ala la mi kepeken nasin ante ken.
+                let konKen = KON_NIMI[nimi.nimi];
+                if (konKen !== weka && konKen[nasinKon] === weka) {
+                    let konPonaNanpa = ["ijo", "kule", "pali"];
+                    for (let kon of konPonaNanpa) {
+                        if (kon === nasinKon) continue;
+                        if (konKen[kon] !== weka) {
+                            nasinKon = kon;
+                            break;
+                        }
+                    }
+                }
+                nimi.nasin = nasinKon;
+            }
         }
     }
     return tokiPoki;
@@ -208,7 +237,7 @@ function tokiInliEInsaTeLaTo(toki) {
         switch (poki.nimi) {
             case "li":
                 // poki ni la, nimi li pali lon toki inli la ni o "does". nimi li ijo lon toki inli la ni o "is".
-                if (poki.insa.mute == 0 || poki.insa[0][0].nasin === "ijo")
+                if (poki.insa.mute == 0 || poki.insa[0][0].nasin !== "pali")
                     // TEKA: nimi e li lon la mi wile e nimi sama "make".
                     tokiInli.pana("is");
                 else
@@ -245,17 +274,16 @@ function tokiInliEIjo(pokiIjo) {
         let pokiPi = pokiIjo.insa[nPoki];
         let inliPiPokiPi = [];
         for (let nPokiPi = pokiPi.mute - 1; nPokiPi >= 0; nPokiPi--) {
-            nimi = pokiPi[nPokiPi].nimi;
+            let nimi = pokiPi[nPokiPi].nimi;
+            let nasinKon = pokiPi[nPokiPi].nasin;
             let konNimi = KON_NIMI[nimi];
             if (konNimi !== weka) {
-                let nasinKon = 'ijo';
-                if (pokiIjo.nimi === "li" && nPoki === 0 && nPokiPi === 0) {
-                    // ken suli la, nimi nanpa wan pi poki "li" li pali.
-                    nasinKon = 'pali';
-                }
+                // ijo
+                // pali
+                // kule
                 if (konNimi[nasinKon] === weka)
-                    nasinKon = 'ijo';
-                if (konNimi[nasinKon] !== weka)
+                    nimi = 'PAKALA['+nimi+']';
+                else
                     nimi = konNimi[nasinKon];
             }
 

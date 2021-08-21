@@ -4,7 +4,7 @@ o pali lon tenpo:
 - [x] nimi li ijo anu pali? o kepeken nimi "is" lon pona
 - [x] nimi "la"
 - [x] nimi "taso"
-- nimi li ijo anu kule?
+- [x] nimi li ijo anu kule?
 - nimi li ken poka pali
 - ijo li mute la toki Inli li wile ante
 - sitelen o awen
