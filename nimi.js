@@ -76,7 +76,7 @@ const KON_NIMI = {
     'walo': {kule: 'white'},
     'wan': {ijo: 'one'},
     'waso': {ijo: 'bird'},
-    'wawa': {kule: 'strong'},
+    'wawa': {ijo: 'strength', kule: 'strong'},
     'weka': {pali: 'leave', kule: 'away'},
     'wile': {ijo: 'desire', pali: 'want', kule: 'wanted', pokaPali: 'want to'},
 };

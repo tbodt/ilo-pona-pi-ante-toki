@@ -237,6 +237,11 @@ function tokiInliEToki(toki) {
 
 function tokiInliEInsaTeLaTo(toki) {
     let tokiInli = [];
+    let pokiELiLon = false;
+    for (let poki of toki) {
+        if (poki.nimi === "e")
+            pokiELiLon = true;
+    }
     for (let nPoki = 0; nPoki < toki.mute; nPoki++) {
         let poki = toki[nPoki];
         let wileAnd = lonAla;
@@ -250,16 +255,32 @@ function tokiInliEInsaTeLaTo(toki) {
             tokiInli.pana("and");
         switch (poki.nimi) {
             case "li":
+                // ken ale:
+                // nimi li ijo ala ijo?
+                // ala li lon ala lon insa poka?
+                // poki E li lon ala lon?
+                // ona li wile moku e ijo
+                // ijo,  poka ala, E:       it does make-into-food the thing
+                // ijo,  poka ala, E ala:   it is red
+                // ijo,  poka, E:           it does want to make-into-food the thing
+                // ijo,  poka, E ala:       it does want to be food
+                // pali, poka ala, E:       it does eat the thing
+                // pali, poka ala, E ala:   it does eat
+                // pali, poka, E:           it does want to eat the thing
+                // pali, poka, E ala:       it does want to eat
                 // poki ni la, nimi li pali lon toki inli la ni o "does". nimi li ijo lon toki inli la ni o "is".
-                let nimiLiIjo = poki.insa.mute == 0 || poki.insa[0][0].nasin !== "pali";
-                if (nimiLiIjo && poki.poka.mute === 0)
-                    // TEKA: nimi e li lon la mi wile e nimi sama "make".
+                let pokaLiAla = poki.poka.mute === 0;
+                let nimiLiIjo = poki.insa.mute === 0 || poki.insa[0][0].nasin !== "pali";
+                let nimiLiSamaPali = !nimiLiIjo || pokiELiLon;
+                if (!nimiLiSamaPali && pokaLiAla)
                     tokiInli.pana("is");
                 else
                     tokiInli.pana("does");
                 for (let poka of poki.poka)
                     tokiInli.pana(KON_NIMI[poka.nimi].pokaPali);
-                if (nimiLiIjo && poki.poka.mute !== 0)
+                if (nimiLiIjo && pokiELiLon)
+                    tokiInli.pana("make-into");
+                if (!nimiLiSamaPali && !pokaLiAla)
                     tokiInli.pana("be");
                 break;
             case "e":
