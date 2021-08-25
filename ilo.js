@@ -37,11 +37,14 @@ function sonaENasinNimi(toki) {
     for (let nimi of toki) {
         nimi = {nimi};
         let nasin = "ijo";
-        switch (nimi.nimi) {
-            case "la": nasin = "la"; break;
-            case "li": case "o": case "e": case "en": nasin = "poki"; break;
-            case "lon": case "tawa": case "tan": case "sama": case "kepeken": nasin = "ken poki"; break;
-            case "pi": nasin = "pi"; break;
+        let kon = KON_NIMI[nimi.nimi];
+        if (kon !== weka) {
+            if (kon.nasin !== weka)
+                nasin = kon.nasin;
+            else if (kon.poki !== weka)
+                nasin = "ken poki";
+            else if (kon.pokaPali !== weka)
+                nasin = "ken poka pali";
         }
         nimi.nasin = nasin;
         tokiNasin.pana(nimi)
@@ -97,7 +100,7 @@ function pokiEInsaTeLaTo(toki) {
         let wawa = WAWA_POKI[nimi];
         if (wawa === weka)
             wawa = 0;
-        pokiPiTenpoNi = {nimi, wawa, insa: [[]]};
+        pokiPiTenpoNi = {nimi, wawa, insa: [[]], poka: []};
         tokiPoki.pana(pokiPiTenpoNi);
     }
     for (let n = 0; n < toki.mute; n++) {
@@ -122,6 +125,15 @@ function pokiEInsaTeLaTo(toki) {
                 nimi.nasin = "poki";
         }
 
+        if (nimi.nasin === "ken poka pali") {
+            // MI SONA ALA A e nasin pona. seme la nimi li pali kin? A
+            // ona li poka pali lon tenpo mute la mi pali e ni: ona li poka pali lon tenpo ale. tenpo kama la ni o pona
+            if (nimiPini !== weka && (nimiPini.nimi === "li" || nimiPini.nasin === "poka"))
+                nimi.nasin = "poka";
+            else
+                nimi.nasin = "ijo";
+        }
+
         if (nimi.nasin === "ijo") {
             if (pokiPiTenpoNi === null)
                 openEPoki("en");
@@ -135,6 +147,8 @@ function pokiEInsaTeLaTo(toki) {
                 openEPoki("nasa");
             pokiPiTenpoNi.nasa = nimi;
             pokiPiTenpoNi = null;
+        } else if (nimi.nasin === "poka") {
+            pokiPiTenpoNi.poka.push(nimi);
         } else if (nimi.nasin === "poki") {
             openEPoki(nimi.nimi);
         }
@@ -237,11 +251,16 @@ function tokiInliEInsaTeLaTo(toki) {
         switch (poki.nimi) {
             case "li":
                 // poki ni la, nimi li pali lon toki inli la ni o "does". nimi li ijo lon toki inli la ni o "is".
-                if (poki.insa.mute == 0 || poki.insa[0][0].nasin !== "pali")
+                let nimiLiIjo = poki.insa.mute == 0 || poki.insa[0][0].nasin !== "pali";
+                if (nimiLiIjo && poki.poka.mute === 0)
                     // TEKA: nimi e li lon la mi wile e nimi sama "make".
                     tokiInli.pana("is");
                 else
                     tokiInli.pana("does");
+                for (let poka of poki.poka)
+                    tokiInli.pana(KON_NIMI[poka.nimi].pokaPali);
+                if (nimiLiIjo && poki.poka.mute !== 0)
+                    tokiInli.pana("be");
                 break;
             case "e":
                 // TEKA: o weka e ni. ni li sona ike.
