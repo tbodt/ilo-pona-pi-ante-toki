@@ -11,6 +11,7 @@ o pali lon tenpo:
 - ijo li mute la toki Inli li wile ante
 - sitelen o awen
 - "taso ijo la" o "given but ijo la" ala
+- "ijo la: ijo" la nimi "la" li sama weka
 
 // mun ni li moku e kulupu
 // [
