@@ -116,7 +116,7 @@ function pokiEInsaTeLaTo(toki) {
         // nasin sin:
         // nimi nanpa pini li lon ala, anu ona li poki li nimi "li" ala, la ken suli la nimi ni li poki ala.
         // taso poki "li" li lon ala la ona li ken wile poki anu seme
-        if (nimi.nasin == "ken poki") {
+        if (nimi.nasin === "ken poki") {
             if (nimiKama === weka || ["ken poki", "poki"].jo(nimiKama.nasin))
                 nimi.nasin = "ijo";
             else if (nimiLiLiLon && (nimiPini === weka || ["pi", "nasa"].jo(nimiPini.nasin) || (nimiPini.nasin === "poki" && nimiPini.nimi !== "li")))
@@ -128,7 +128,7 @@ function pokiEInsaTeLaTo(toki) {
         if (nimi.nasin === "ken poka pali") {
             // MI SONA ALA A e nasin pona. seme la nimi li pali kin? A
             // ona li poka pali lon tenpo mute la mi pali e ni: ona li poka pali lon tenpo ale. tenpo kama la ni o pona
-            if (nimiPini !== weka && (nimiPini.nimi === "li" || nimiPini.nasin === "poka"))
+            if (nimiPini !== weka && (nimiPini.nimi === "li" || nimiPini.nasin === "poka") && nimiKama !== weka && ["ijo", "ken poki"].includes(nimiKama.nasin))
                 nimi.nasin = "poka";
             else
                 nimi.nasin = "ijo";
